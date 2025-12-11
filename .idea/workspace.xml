@@ -4,7 +4,14 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="73fd4b72-c603-43d2-80be-637ca2de7c31" name="更改" comment="" />
+    <list default="true" id="73fd4b72-c603-43d2-80be-637ca2de7c31" name="更改" comment="">
+      <change afterPath="$PROJECT_DIR$/tcpserver/pkg/db/database.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tcpserver/cmd/tcpserver/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/tcpserver/cmd/tcpserver/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tcpserver/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/tcpserver/config/config.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tcpserver/config/config.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/tcpserver/config/config.yaml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -19,7 +26,7 @@
   </component>
   <component name="GOROOT" url="file://$USER_HOME$/sdk/go1.25.5" />
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/entry-task-httpServer" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/main.go" root0="FORCE_HIGHLIGHTING" />
@@ -36,36 +43,38 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultGoTemplateProperty": "Go File",
-    "Go 构建.go build entry-task.executor": "Run",
-    "Go 构建.go build entry-task/httpserver/cmd/httpserver.executor": "Run",
-    "Go 构建.go build entry-task/tcpserver/cmd/tcpserver.executor": "Run",
-    "RunOnceActivity.GoLinterPluginOnboardingV2": "true",
-    "RunOnceActivity.GoLinterPluginStorageMigration": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "git-widget-placeholder": "main",
-    "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "/Users/chuyao.zhuo/GolandProjects/entry-task/tcpserver",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "run.configurations.included.in.services": "true",
-    "settings.editor.selected.configurable": "advanced.settings"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+    &quot;Go 构建.go build entry-task.executor&quot;: &quot;Run&quot;,
+    &quot;Go 构建.go build entry-task/httpserver/cmd/httpserver.executor&quot;: &quot;Run&quot;,
+    &quot;Go 构建.go build entry-task/tcpserver/cmd/tcpserver.executor&quot;: &quot;Run&quot;,
+    &quot;Go 测试.go test entry-task/tcpserver/config.executor&quot;: &quot;Run&quot;,
+    &quot;Go 测试.go test entry-task/tcpserver/pkg/logger.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.GoLinterPluginOnboardingV2&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.GoLinterPluginStorageMigration&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/chuyao.zhuo/GolandProjects/entry-task/tcpserver&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;advanced.settings&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "redis",
-      "mysql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql&quot;,
+      &quot;redis&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/tcpserver" />
@@ -96,7 +105,7 @@
       </map>
     </option>
   </component>
-  <component name="RunManager" selected="Go 构建.go build entry-task/tcpserver/cmd/tcpserver">
+  <component name="RunManager" selected="Go 测试.go test entry-task/tcpserver/pkg/logger">
     <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
       <module name="entry-task" />
       <working_directory value="$PROJECT_DIR$" />
@@ -143,8 +152,32 @@
       <framework value="gotest" />
       <method v="2" />
     </configuration>
+    <configuration name="go test entry-task/tcpserver/config" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="entry-task" />
+      <working_directory value="$PROJECT_DIR$/tcpserver/config" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="entry-task/tcpserver/config" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go test entry-task/tcpserver/pkg/logger" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="entry-task" />
+      <working_directory value="$PROJECT_DIR$/tcpserver/pkg/logger" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="entry-task/tcpserver/pkg/logger" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go 测试.go test entry-task/tcpserver/pkg/logger" />
+        <item itemvalue="Go 测试.go test entry-task/tcpserver/config" />
         <item itemvalue="Go 构建.go build entry-task/tcpserver/cmd/tcpserver" />
         <item itemvalue="Go 构建.go build entry-task/httpserver/cmd/httpserver" />
         <item itemvalue="Go 构建.go build entry-task" />
@@ -171,16 +204,5 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/tcpserver/cmd/tcpserver/main.go</url>
-          <line>2</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

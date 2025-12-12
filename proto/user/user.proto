@@ -1,0 +1,107 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "entry-task/proto/user";
+
+// 用户服务
+service UserService {
+  // 用户登录
+  rpc Login(LoginRequest) returns (LoginResponse);
+  
+  // 用户登出
+  rpc Logout(LogoutRequest) returns (LogoutResponse);
+  
+  // 获取用户Profile
+  rpc GetProfile(GetProfileRequest) returns (GetProfileResponse);
+  
+  // 更新昵称
+  rpc UpdateNickname(UpdateNicknameRequest) returns (UpdateNicknameResponse);
+  
+  // 更新头像
+  rpc UpdateProfilePicture(UpdateProfilePictureRequest) returns (UpdateProfilePictureResponse);
+}
+
+// ============================================================================
+// 登录相关
+// ============================================================================
+
+// 登录请求
+message LoginRequest {
+  string username = 1;
+  string password = 2;
+}
+
+// 登录响应
+message LoginResponse {
+  int32 code = 1;
+  string message = 2;
+  string token = 3;  // Session Token
+  UserProfile user = 4;
+}
+
+// 登出请求
+message LogoutRequest {
+  string token = 1;
+}
+
+// 登出响应
+message LogoutResponse {
+  int32 code = 1;
+  string message = 2;
+}
+
+// ============================================================================
+// Profile相关
+// ============================================================================
+
+// 获取Profile请求
+message GetProfileRequest {
+  string token = 1;
+}
+
+// 获取Profile响应
+message GetProfileResponse {
+  int32 code = 1;
+  string message = 2;
+  UserProfile user = 3;
+}
+
+// 更新昵称请求
+message UpdateNicknameRequest {
+  string token = 1;
+  string nickname = 2;
+}
+
+// 更新昵称响应
+message UpdateNicknameResponse {
+  int32 code = 1;
+  string message = 2;
+  UserProfile user = 3;
+}
+
+// 更新头像请求
+message UpdateProfilePictureRequest {
+  string token = 1;
+  string profile_picture = 2;  // 头像文件路径
+}
+
+// 更新头像响应
+message UpdateProfilePictureResponse {
+  int32 code = 1;
+  string message = 2;
+  string avatar_url = 3;
+}
+
+// ============================================================================
+// 通用消息
+// ============================================================================
+
+// 用户Profile
+message UserProfile {
+  uint64 id = 1;
+  string username = 2;
+  string nickname = 3;
+  string avatar_url = 4;
+}
+

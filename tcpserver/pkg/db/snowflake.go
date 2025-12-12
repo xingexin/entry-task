@@ -45,19 +45,20 @@ var (
 	once             sync.Once
 )
 
-// NewSnowflake 创建雪花ID生成器
-// machineID: 机器ID (0-1023)，用于区分不同的服务实例
-func NewSnowflake(machineID int64) (*Snowflake, error) {
-	if machineID < 0 || machineID > maxMachineID {
-		return nil, fmt.Errorf("machineID必须在0-%d之间，当前值：%d", maxMachineID, machineID)
-	}
+// GetDefaultSnowflake 获取默认的雪花ID生成器（单例模式）
+// 目前为单机服务器，仅使用单例
+func GetDefaultSnowflake() *Snowflake {
+	once.Do(func() {
+		// 默认使用machineID=1
+		// 生产环境应该从配置文件读取或根据IP/hostname生成
+		defaultSnowflake, _ = NewSnowflake(1)
+	})
+	return defaultSnowflake
+}
 
-	return &Snowflake{
-		epoch:     epoch,
-		machineID: machineID,
-		timestamp: 0,
-		sequence:  0,
-	}, nil
+// GenerateID 生成下一个ID（使用默认生成器）
+func GenerateID() (int64, error) {
+	return GetDefaultSnowflake().NextID()
 }
 
 // NextID 生成下一个ID
@@ -99,6 +100,21 @@ func (s *Snowflake) NextID() (int64, error) {
 	return id, nil
 }
 
+// NewSnowflake 创建雪花ID生成器
+// machineID: 机器ID (0-1023)，用于区分不同的服务实例
+func NewSnowflake(machineID int64) (*Snowflake, error) {
+	if machineID < 0 || machineID > maxMachineID {
+		return nil, fmt.Errorf("machineID必须在0-%d之间，当前值：%d", maxMachineID, machineID)
+	}
+
+	return &Snowflake{
+		epoch:     epoch,
+		machineID: machineID,
+		timestamp: 0,
+		sequence:  0,
+	}, nil
+}
+
 // waitNextMillis 等待下一毫秒
 func (s *Snowflake) waitNextMillis(lastTimestamp int64) int64 {
 	now := time.Now().UnixMilli()
@@ -109,21 +125,7 @@ func (s *Snowflake) waitNextMillis(lastTimestamp int64) int64 {
 	return now
 }
 
-// GetDefaultSnowflake 获取默认的雪花ID生成器（单例模式）
-func GetDefaultSnowflake() *Snowflake {
-	once.Do(func() {
-		// 默认使用machineID=1
-		// 生产环境应该从配置文件读取或根据IP/hostname生成
-		defaultSnowflake, _ = NewSnowflake(1)
-	})
-	return defaultSnowflake
-}
-
-// GenerateID 生成下一个ID（使用默认生成器）
-func GenerateID() (int64, error) {
-	return GetDefaultSnowflake().NextID()
-}
-
+// 为分布式服务实现
 // ParseSnowflakeID 解析雪花ID，返回时间戳、机器ID、序列号
 func ParseSnowflakeID(id int64) (timestamp int64, machineID int64, sequence int64) {
 	sequence = id & maxSequence

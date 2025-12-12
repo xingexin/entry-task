@@ -239,4 +239,3 @@ func BenchmarkGetDSN(b *testing.B) {
 		_ = dbConfig.GetDSN()
 	}
 }
-

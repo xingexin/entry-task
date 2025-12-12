@@ -2,10 +2,11 @@ package container
 
 import (
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/jmoiron/sqlx"
 	"go.uber.org/dig"
-	"gorm.io/gorm"
 
 	"entry-task/tcpserver/config"
+	"entry-task/tcpserver/internal/repository"
 	"entry-task/tcpserver/pkg/db"
 )
 
@@ -26,11 +27,18 @@ func Init() error {
 
 // registerProviders 注册所有提供者
 func registerProviders() error {
-	if err := Container.Provide(func(cfg *config.Config) (*gorm.DB, error) {
+	// 注册数据库连接（sqlx）
+	if err := Container.Provide(func(cfg *config.Config) (*sqlx.DB, error) {
 		return db.InitDB(cfg)
 	}); err != nil {
 		return err
 	}
+
+	// 注册 UserRepository
+	if err := Container.Provide(repository.NewUserRepository); err != nil {
+		return err
+	}
+
 	return nil
 }
 

@@ -51,23 +51,23 @@ func Init(cfg *Config) error {
 
 	// 3. 自定义编码器配置
 	encoderConfig := zapcore.EncoderConfig{
-		TimeKey:        "time",
-		LevelKey:       "level",
-		NameKey:        "logger",
-		CallerKey:      "caller",
-		MessageKey:     "msg",
-		StacktraceKey:  "stacktrace",
-		LineEnding:     zapcore.DefaultLineEnding,
-		
+		TimeKey:       "time",
+		LevelKey:      "level",
+		NameKey:       "logger",
+		CallerKey:     "caller",
+		MessageKey:    "msg",
+		StacktraceKey: "stacktrace",
+		LineEnding:    zapcore.DefaultLineEnding,
+
 		// 自定义日志级别格式 [INFO]
 		EncodeLevel: customLevelEncoder,
-		
+
 		// 自定义时间格式
 		EncodeTime: zapcore.TimeEncoderOfLayout("2006-01-02 15:04:05"),
-		
+
 		// 持续时间格式
 		EncodeDuration: zapcore.SecondsDurationEncoder,
-		
+
 		// 调用者格式
 		EncodeCaller: zapcore.ShortCallerEncoder,
 	}
@@ -150,4 +150,3 @@ func Sync() {
 		_ = Logger.Sync()
 	}
 }
-

@@ -11,10 +11,14 @@ const (
 	CodeInvalidFormat = 40002 // 格式错误
 
 	// 认证错误 (401xx)
-	CodeUnauthorized       = 40100 // 未认证
-	CodeInvalidToken       = 40101 // Token无效
-	CodeTokenExpired       = 40102 // Token过期
-	CodeInvalidCredentials = 40103 // 用户名或密码错误
+	CodeUnauthorized             = 40100 // 未认证
+	CodeInvalidToken             = 40101 // Token无效
+	CodeTokenExpired             = 40102 // Token过期
+	CodeInvalidAccountOrPassword = 40103 // 用户名或密码错误
+	CodeInvalidNickname          = 40104 // 无效昵称
+	CodeInvalidFile              = 40005 // 无效文件
+	CodeFileTooLarge             = 40006 // 文件过大
+	CodeUnsupportedFileType      = 40007 // 不支持的文件类型
 
 	// 权限错误 (403xx)
 	CodeForbidden    = 40300 // 无权限
@@ -47,10 +51,14 @@ var CodeMessage = map[int]string{
 	CodeInvalidFormat: "格式错误",
 
 	// 认证错误
-	CodeUnauthorized:       "未认证",
-	CodeInvalidToken:       "Token无效",
-	CodeTokenExpired:       "Token已过期",
-	CodeInvalidCredentials: "用户名或密码错误",
+	CodeUnauthorized:             "未认证",
+	CodeInvalidToken:             "Token无效",
+	CodeTokenExpired:             "Token已过期",
+	CodeInvalidAccountOrPassword: "用户名或密码错误",
+	CodeInvalidNickname:          "无效的昵称",
+	CodeInvalidFile:              "无效文件",
+	CodeFileTooLarge:             "文件过大",
+	CodeUnsupportedFileType:      "不支持的文件类型",
 
 	// 权限错误
 	CodeForbidden:    "无权限",

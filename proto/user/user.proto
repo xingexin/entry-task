@@ -90,7 +90,7 @@ message UpdateProfilePictureRequest {
 message UpdateProfilePictureResponse {
   int32 code = 1;
   string message = 2;
-  string avatar_url = 3;
+  UserProfile user = 3;
 }
 
 // ============================================================================

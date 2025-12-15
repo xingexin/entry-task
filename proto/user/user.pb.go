@@ -519,7 +519,7 @@ type UpdateProfilePictureResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
 	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
-	AvatarUrl     string                 `protobuf:"bytes,3,opt,name=avatar_url,json=avatarUrl,proto3" json:"avatar_url,omitempty"`
+	User          *UserProfile           `protobuf:"bytes,3,opt,name=user,proto3" json:"user,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -568,11 +568,11 @@ func (x *UpdateProfilePictureResponse) GetMessage() string {
 	return ""
 }
 
-func (x *UpdateProfilePictureResponse) GetAvatarUrl() string {
+func (x *UpdateProfilePictureResponse) GetUser() *UserProfile {
 	if x != nil {
-		return x.AvatarUrl
+		return x.User
 	}
-	return ""
+	return nil
 }
 
 // 用户Profile
@@ -677,12 +677,11 @@ const file_proto_user_user_proto_rawDesc = "" +
 	"\x04user\x18\x03 \x01(\v2\x11.user.UserProfileR\x04user\"\\\n" +
 	"\x1bUpdateProfilePictureRequest\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\tR\x05token\x12'\n" +
-	"\x0fprofile_picture\x18\x02 \x01(\tR\x0eprofilePicture\"k\n" +
+	"\x0fprofile_picture\x18\x02 \x01(\tR\x0eprofilePicture\"s\n" +
 	"\x1cUpdateProfilePictureResponse\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\x12\x1d\n" +
-	"\n" +
-	"avatar_url\x18\x03 \x01(\tR\tavatarUrl\"t\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\x12%\n" +
+	"\x04user\x18\x03 \x01(\v2\x11.user.UserProfileR\x04user\"t\n" +
 	"\vUserProfile\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x1a\n" +
 	"\busername\x18\x02 \x01(\tR\busername\x12\x1a\n" +
@@ -727,21 +726,22 @@ var file_proto_user_user_proto_depIdxs = []int32{
 	10, // 0: user.LoginResponse.user:type_name -> user.UserProfile
 	10, // 1: user.GetProfileResponse.user:type_name -> user.UserProfile
 	10, // 2: user.UpdateNicknameResponse.user:type_name -> user.UserProfile
-	0,  // 3: user.UserService.Login:input_type -> user.LoginRequest
-	2,  // 4: user.UserService.Logout:input_type -> user.LogoutRequest
-	4,  // 5: user.UserService.GetProfile:input_type -> user.GetProfileRequest
-	6,  // 6: user.UserService.UpdateNickname:input_type -> user.UpdateNicknameRequest
-	8,  // 7: user.UserService.UpdateProfilePicture:input_type -> user.UpdateProfilePictureRequest
-	1,  // 8: user.UserService.Login:output_type -> user.LoginResponse
-	3,  // 9: user.UserService.Logout:output_type -> user.LogoutResponse
-	5,  // 10: user.UserService.GetProfile:output_type -> user.GetProfileResponse
-	7,  // 11: user.UserService.UpdateNickname:output_type -> user.UpdateNicknameResponse
-	9,  // 12: user.UserService.UpdateProfilePicture:output_type -> user.UpdateProfilePictureResponse
-	8,  // [8:13] is the sub-list for method output_type
-	3,  // [3:8] is the sub-list for method input_type
-	3,  // [3:3] is the sub-list for extension type_name
-	3,  // [3:3] is the sub-list for extension extendee
-	0,  // [0:3] is the sub-list for field type_name
+	10, // 3: user.UpdateProfilePictureResponse.user:type_name -> user.UserProfile
+	0,  // 4: user.UserService.Login:input_type -> user.LoginRequest
+	2,  // 5: user.UserService.Logout:input_type -> user.LogoutRequest
+	4,  // 6: user.UserService.GetProfile:input_type -> user.GetProfileRequest
+	6,  // 7: user.UserService.UpdateNickname:input_type -> user.UpdateNicknameRequest
+	8,  // 8: user.UserService.UpdateProfilePicture:input_type -> user.UpdateProfilePictureRequest
+	1,  // 9: user.UserService.Login:output_type -> user.LoginResponse
+	3,  // 10: user.UserService.Logout:output_type -> user.LogoutResponse
+	5,  // 11: user.UserService.GetProfile:output_type -> user.GetProfileResponse
+	7,  // 12: user.UserService.UpdateNickname:output_type -> user.UpdateNicknameResponse
+	9,  // 13: user.UserService.UpdateProfilePicture:output_type -> user.UpdateProfilePictureResponse
+	9,  // [9:14] is the sub-list for method output_type
+	4,  // [4:9] is the sub-list for method input_type
+	4,  // [4:4] is the sub-list for extension type_name
+	4,  // [4:4] is the sub-list for extension extendee
+	0,  // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_proto_user_user_proto_init() }

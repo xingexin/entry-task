@@ -8,6 +8,7 @@ import (
 	"entry-task/tcpserver/config"
 	"entry-task/tcpserver/internal/repository"
 	"entry-task/tcpserver/pkg/db"
+	"entry-task/tcpserver/pkg/redis"
 )
 
 // Container 全局依赖注入容器
@@ -31,6 +32,18 @@ func registerProviders() error {
 	if err := Container.Provide(func(cfg *config.Config) (*sqlx.DB, error) {
 		return db.InitDB(cfg)
 	}); err != nil {
+		return err
+	}
+
+	// 注册Redis客户端
+	if err := Container.Provide(func(cfg *config.Config) (redis.Client, error) {
+		return redis.InitRedis(cfg)
+	}); err != nil {
+		return err
+	}
+
+	// 注册Redis管理器
+	if err := Container.Provide(redis.NewManager); err != nil {
 		return err
 	}
 

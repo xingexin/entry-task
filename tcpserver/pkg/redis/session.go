@@ -45,6 +45,7 @@ func NewSessionManager(client Client) SessionManager {
 }
 
 // CreateSession 创建Session
+// session key示例：sess:(uuid)123123123123
 func (sm *sessionManager) CreateSession(ctx context.Context, userID uint64) (string, error) {
 	token := uuid.New().String()
 	key := SessionKeyPrefix + token

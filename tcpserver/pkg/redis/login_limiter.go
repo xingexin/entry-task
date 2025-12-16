@@ -3,6 +3,7 @@ package redis
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"time"
 
 	"go.uber.org/zap"
@@ -47,6 +48,7 @@ func NewLoginLimiter(client Client) LoginLimiter {
 }
 
 // RecordLoginFail 记录登录失败
+// 登录失败key设计: login_fail:123123
 func (ll *loginLimiter) RecordLoginFail(ctx context.Context, username string) (int64, error) {
 	key := LoginFailKeyPrefix + username
 
@@ -82,8 +84,8 @@ func (ll *loginLimiter) GetLoginFailCount(ctx context.Context, username string) 
 		return 0, err
 	}
 
-	var count int64
-	if _, err := fmt.Sscanf(countStr, "%d", &count); err != nil {
+	count, err := strconv.ParseInt(countStr, 10, 64)
+	if err != nil {
 		log.Error("解析登录失败计数失败",
 			zap.Error(err),
 			zap.String("username", username),

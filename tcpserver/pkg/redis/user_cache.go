@@ -2,7 +2,7 @@ package redis
 
 import (
 	"context"
-	"fmt"
+	"strconv"
 	"time"
 
 	"go.uber.org/zap"
@@ -13,6 +13,7 @@ import (
 
 const (
 	// UserCacheKeyPrefix 用户缓存键前缀
+	// 缓存键设计示例：user:123
 	UserCacheKeyPrefix = "user:"
 
 	// UserCacheTTL 用户缓存过期时间（30分钟）
@@ -23,9 +24,6 @@ const (
 
 	// NullCacheTTL 负缓存过期时间（5分钟）
 	NullCacheTTL = 5 * time.Minute
-
-	// DelayDeleteTime 延迟双删的延迟时间（500ms）
-	DelayDeleteTime = 500 * time.Millisecond
 )
 
 // CachedUser 缓存的用户信息
@@ -49,16 +47,6 @@ type UserCache interface {
 
 	// DeleteUser 删除用户缓存
 	DeleteUser(ctx context.Context, userID uint64) error
-
-	// DeleteUserWithDelay 延迟双删（先删除，500ms后再删除一次）
-	DeleteUserWithDelay(ctx context.Context, userID uint64) error
-
-	// GetOrLoad 获取缓存或从数据库加载（缓存穿透保护）
-	GetOrLoad(
-		ctx context.Context,
-		userID uint64,
-		loadFunc func(uint64) (*model.User, error),
-	) (*model.User, error)
 }
 
 // userCache 用户缓存管理器实现
@@ -72,8 +60,10 @@ func NewUserCache(client Client) UserCache {
 }
 
 // GetUser 获取用户缓存
+// 正缓存键设计示例：user:123
+// 负缓存键设计示例：user:null:123
 func (uc *userCache) GetUser(ctx context.Context, userID uint64) (*CachedUser, error) {
-	key := fmt.Sprintf("%s%d", UserCacheKeyPrefix, userID)
+	key := UserCacheKeyPrefix + strconv.FormatUint(userID, 10)
 
 	var user CachedUser
 	err := uc.client.GetJSON(ctx, key, &user)
@@ -96,8 +86,10 @@ func (uc *userCache) GetUser(ctx context.Context, userID uint64) (*CachedUser, e
 }
 
 // SetUser 设置用户缓存
+// 正缓存键设计示例：user:123
+// 负缓存键设计示例：user:null:123
 func (uc *userCache) SetUser(ctx context.Context, user *model.User) error {
-	key := fmt.Sprintf("%s%d", UserCacheKeyPrefix, user.ID)
+	key := UserCacheKeyPrefix + strconv.FormatUint(user.ID, 10)
 
 	cachedUser := &CachedUser{
 		ID:             user.ID,
@@ -118,7 +110,7 @@ func (uc *userCache) SetUser(ctx context.Context, user *model.User) error {
 
 // SetNullCache 设置负缓存
 func (uc *userCache) SetNullCache(ctx context.Context, userID uint64) error {
-	key := fmt.Sprintf("%s%d", UserCacheKeyPrefix, userID)
+	key := UserCacheKeyPrefix + strconv.FormatUint(userID, 10)
 	nullUser := &CachedUser{Username: NullCacheValue}
 
 	err := uc.client.SetJSON(ctx, key, nullUser, NullCacheTTL)
@@ -133,7 +125,7 @@ func (uc *userCache) SetNullCache(ctx context.Context, userID uint64) error {
 
 // DeleteUser 删除用户缓存
 func (uc *userCache) DeleteUser(ctx context.Context, userID uint64) error {
-	key := fmt.Sprintf("%s%d", UserCacheKeyPrefix, userID)
+	key := UserCacheKeyPrefix + strconv.FormatUint(userID, 10)
 	err := uc.client.Del(ctx, key)
 	if err != nil {
 		log.Error("删除用户缓存失败", zap.Error(err), zap.Uint64("user_id", userID))
@@ -141,74 +133,4 @@ func (uc *userCache) DeleteUser(ctx context.Context, userID uint64) error {
 	}
 	log.Debug("删除用户缓存成功", zap.Uint64("user_id", userID))
 	return nil
-}
-
-// DeleteUserWithDelay 延迟双删
-func (uc *userCache) DeleteUserWithDelay(ctx context.Context, userID uint64) error {
-	// 第一次删除
-	if err := uc.DeleteUser(ctx, userID); err != nil {
-		return err
-	}
-
-	// 异步延迟删除
-	go func() {
-		time.Sleep(DelayDeleteTime)
-		delayCtx := context.Background()
-		if err := uc.DeleteUser(delayCtx, userID); err != nil {
-			log.Error("延迟删除缓存失败", zap.Error(err), zap.Uint64("user_id", userID))
-		} else {
-			log.Debug("延迟删除缓存成功", zap.Uint64("user_id", userID))
-		}
-	}()
-
-	return nil
-}
-
-// GetOrLoad 获取缓存或从数据库加载（缓存穿透保护）
-func (uc *userCache) GetOrLoad(
-	ctx context.Context,
-	userID uint64,
-	loadFunc func(uint64) (*model.User, error),
-) (*model.User, error) {
-	// 1. 先查缓存
-	cachedUser, err := uc.GetUser(ctx, userID)
-	if err != nil {
-		return nil, err
-	}
-
-	// 2. 缓存命中
-	if cachedUser != nil {
-		return &model.User{
-			ID:             cachedUser.ID,
-			Username:       cachedUser.Username,
-			Nickname:       cachedUser.Nickname,
-			ProfilePicture: cachedUser.ProfilePicture,
-		}, nil
-	}
-
-	// 3. 从数据库加载
-	user, err := loadFunc(userID)
-	if err != nil {
-		return nil, err
-	}
-
-	// 4. 用户不存在，设置负缓存（防止缓存穿透）
-	if user == nil {
-		if err := uc.SetNullCache(ctx, userID); err != nil {
-			log.Error("设置负缓存失败（GetOrLoad）",
-				zap.Error(err),
-				zap.Uint64("user_id", userID))
-			// 不返回错误，允许继续返回nil
-		}
-		return nil, nil
-	}
-
-	// 5. 用户存在，设置缓存
-	if err := uc.SetUser(ctx, user); err != nil {
-		log.Error("设置用户缓存失败（GetOrLoad）",
-			zap.Error(err),
-			zap.Uint64("user_id", userID))
-		// 不返回错误，允许继续返回user数据（缓存失败不影响数据返回）
-	}
-	return user, nil
 }

@@ -7,6 +7,8 @@ import (
 
 	"entry-task/tcpserver/config"
 	"entry-task/tcpserver/internal/repository"
+	"entry-task/tcpserver/internal/rpchandler"
+	"entry-task/tcpserver/internal/service"
 	"entry-task/tcpserver/pkg/db"
 	"entry-task/tcpserver/pkg/redis"
 )
@@ -49,6 +51,16 @@ func registerProviders() error {
 
 	// 注册 UserRepository
 	if err := Container.Provide(repository.NewUserRepository); err != nil {
+		return err
+	}
+
+	// 注册 UserService
+	if err := Container.Provide(service.NewUserService); err != nil {
+		return err
+	}
+
+	// 注册 UserServiceHandler (gRPC Handler)
+	if err := Container.Provide(rpchandler.NewUserServiceHandler); err != nil {
 		return err
 	}
 

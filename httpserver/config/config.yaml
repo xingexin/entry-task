@@ -1,0 +1,17 @@
+# HTTP Server 配置
+server:
+  host: "0.0.0.0"
+  port: 8080
+  mode: "development"  # development, production
+
+# gRPC Client 配置（连接 TCP Server）
+grpc:
+  host: "localhost"
+  port: 50051
+
+# 日志配置
+log:
+  level: "info"       # debug, info, warn, error
+  output: "stdout"    # stdout, file
+  file_path: "./logs/http.log"
+

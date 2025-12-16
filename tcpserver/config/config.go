@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"time"
 
 	"gopkg.in/yaml.v3"
@@ -19,14 +20,20 @@ type Config struct {
 
 // ServerConfig 服务器配置
 type ServerConfig struct {
-	Host string `yaml:"host"`
-	Port int    `yaml:"port"`
-	Mode string `yaml:"mode"`
+	Host    string `yaml:"host"`
+	Port    int    `yaml:"port"`
+	TCPPort int    `yaml:"tcp_port"` // TCP Server (gRPC) 端口
+	Mode    string `yaml:"mode"`
+}
+
+// GetTCPAddr 获取 TCP Server 地址
+func (s *ServerConfig) GetTCPAddr() string {
+	return s.Host + ":" + strconv.Itoa(s.TCPPort)
 }
 
 // DatabaseConfig 数据库配置
 type DatabaseConfig struct {
-	Driver          string `yaml:"driver"`            // 数据库驱动: mysql, postgres
+	Driver          string `yaml:"driver"` // 数据库驱动: mysql, postgres
 	Host            string `yaml:"host"`
 	Port            int    `yaml:"port"`
 	Username        string `yaml:"username"`
@@ -70,7 +77,7 @@ type RedisConfig struct {
 
 // GetAddr 获取Redis地址
 func (r *RedisConfig) GetAddr() string {
-	return fmt.Sprintf("%s:%d", r.Host, r.Port)
+	return r.Host + ":" + strconv.Itoa(r.Port)
 }
 
 // GetDialTimeout 获取连接超时时间

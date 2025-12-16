@@ -1,7 +1,8 @@
 # 服务器配置
 server:
   host: "0.0.0.0"
-  port: 8080
+  port: 8080          # HTTP Server 端口
+  tcp_port: 50051     # TCP Server (gRPC) 端口
   mode: "development"  # development, production
 
 # 数据库配置

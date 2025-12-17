@@ -6,6 +6,7 @@ import (
 	"entry-task/httpserver/internal/router"
 	pb "entry-task/proto/user"
 	"flag"
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -26,6 +27,7 @@ func main() {
 	flag.Parse()
 
 	// 1. 加载配置
+	fmt.Println(*configPath)
 	cfg, err := config.Load(*configPath)
 	if err != nil {
 		panic("加载配置失败: " + err.Error())

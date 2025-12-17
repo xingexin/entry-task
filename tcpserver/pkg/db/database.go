@@ -54,13 +54,6 @@ func InitDB(cfg *config.Config) (*sqlx.DB, error) {
 		)
 		return nil, fmt.Errorf("连接数据库失败: %w", err)
 	}
-	//闭包处理defer
-	defer func(db *sqlx.DB) {
-		err := db.Close()
-		if err != nil {
-
-		}
-	}(db)
 
 	// 配置连接池
 	log.Debug("配置数据库连接池",

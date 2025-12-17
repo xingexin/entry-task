@@ -21,10 +21,10 @@ import (
 
 const (
 	// MaxFileSize 文件上传配置
-	MaxFileSize       = 5 * 1024 * 1024               // 5MB
-	AllowedExtensions = ".jpg,.jpeg,.png,.webp"       // 允许的文件类型
-	UploadDir         = "./uploads/avatars"           // 上传目录
-	DefaultAvatar     = "./static/default_avatar.png" // 默认头像
+	MaxFileSize       = 5 * 1024 * 1024                        // 5MB
+	AllowedExtensions = ".jpg,.jpeg,.png,.webp"                // 允许的文件类型
+	UploadDir         = "./uploads/avatars"                    // 上传目录
+	DefaultAvatar     = "httpserver/static/default_avatar.png" // 默认头像
 )
 
 // ============================================================================
@@ -89,13 +89,23 @@ func (h *UserHandler) Login(c *gin.Context) {
 		return
 	}
 
+	// 设置Cookie（Web浏览器自动使用）
+	c.SetCookie(
+		"auth_token",    // Cookie名称
+		loginResp.Token, // Token值
+		7200,            // MaxAge: 2小时（秒）
+		"/",             // Path: 全站有效
+		"",              // Domain: 当前域
+		false,           // Secure: 生产环境建议改为true
+		true,            // HttpOnly: 防止XSS攻击
+	)
+
+	// 发送响应（必须在设置Cookie和Header之后）
 	response.Success(c, gin.H{
 		"username":   loginResp.User.Username,
 		"nickname":   loginResp.User.Nickname,
 		"avatar_url": "/api/v1/profile/picture",
 	})
-
-	c.Header("X-Auth-Token", loginResp.Token)
 }
 
 // GetProfile 获取用户信息
@@ -357,6 +367,17 @@ func (h *UserHandler) Logout(c *gin.Context) {
 		return
 	}
 
+	// 清除Cookie
+	c.SetCookie(
+		"auth_token",
+		"", // 空值
+		-1, // MaxAge=-1 表示立即删除
+		"/",
+		"",
+		false,
+		true,
+	)
+
 	response.Success(c, gin.H{})
 }
 
@@ -364,16 +385,15 @@ func (h *UserHandler) Logout(c *gin.Context) {
 // 工具函数
 // ============================================================================
 
-// extractToken 从请求头中提取认证 Token
+// extractToken 从请求头或Cookie中提取认证 Token
 // 支持以下格式：
 //   - Authorization: Bearer <token>
 //   - Authorization: <token>
+//   - Cookie: auth_token=<token>
 //
 // 返回去除 "Bearer " 前缀和首尾空格后的 token 字符串
 func extractToken(c *gin.Context) string {
-	token := c.GetHeader("Authorization")
-	token = strings.TrimPrefix(token, "Bearer ")
-	token = strings.TrimSpace(token)
+	token, _ := c.Cookie("auth_token")
 	return token
 }
 

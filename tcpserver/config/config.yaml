@@ -8,11 +8,11 @@ server:
 # 数据库配置
 database:
   driver: "mysql"  # 数据库驱动: mysql, postgres
-  host: "192.168.215.4"
+  host: "192.168.215.5"
   port: 3306
   username: "root"
   password: "root"
-  database: "entrytask"
+  database: "test"
   charset: "utf8mb4"
   parse_time: true
   loc: "Local"

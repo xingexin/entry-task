@@ -47,18 +47,18 @@ func main() {
 	log.Info("TCP Server 启动中...")
 	log.Info("配置加载成功", zap.String("config_path", *configPath))
 
-	// 3. 注册配置到容器（供依赖注入使用）
+	// 3. 初始化依赖注入容器
+	if err := container.Init(); err != nil {
+		log.Fatal("初始化容器失败", zap.Error(err))
+	}
+	log.Info("依赖注入容器初始化成功")
+
+	// 4. 注册配置到容器（供依赖注入使用）
 	if err := container.Container.Provide(func() *config.Config {
 		return cfg
 	}); err != nil {
 		log.Fatal("注册配置失败", zap.Error(err))
 	}
-
-	// 4. 初始化依赖注入容器
-	if err := container.Init(); err != nil {
-		log.Fatal("初始化容器失败", zap.Error(err))
-	}
-	log.Info("依赖注入容器初始化成功")
 
 	// 5. 从容器获取 RedisManager（用于鉴权拦截器）
 	var redisManager redis.Manager

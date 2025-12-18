@@ -97,10 +97,10 @@ func (h *UserHandler) Login(c *gin.Context) {
 		"/",             // Path: 全站有效
 		"",              // Domain: 当前域
 		false,           // Secure: 生产环境建议改为true
-		true,            // HttpOnly: 防止XSS攻击
+		false,           // HttpOnly: 改为false，让前端JS可以读取
 	)
 
-	// 发送响应（必须在设置Cookie和Header之后）
+	// 发送响应
 	response.Success(c, gin.H{
 		"username":   loginResp.User.Username,
 		"nickname":   loginResp.User.Nickname,

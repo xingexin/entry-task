@@ -20,7 +20,7 @@ import (
 )
 
 var (
-	configPath = flag.String("config", "config/config.yaml", "配置文件路径")
+	configPath = flag.String("config", "./tcpserver/config/config.yaml", "配置文件路径")
 )
 
 func main() {

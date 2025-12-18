@@ -13,7 +13,7 @@ import (
 
 const (
 	// SessionTTL Session默认过期时间（2小时）
-	SessionTTL = 99 * time.Hour
+	SessionTTL = 2 * time.Hour
 
 	// SessionKeyPrefix Session键前缀
 	SessionKeyPrefix = "sess:"

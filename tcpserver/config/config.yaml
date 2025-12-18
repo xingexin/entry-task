@@ -23,7 +23,7 @@ database:
 
 # Redis配置
 redis:
-  host: "192.168.215.2"
+  host: "192.168.215.6"
   port: 6379
   password: ""
   db: 0

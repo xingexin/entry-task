@@ -1,24 +1,21 @@
 # 压测数据生成脚本
 
-## 📋 概述
+## 概述
 
 本目录包含用于生成1000万测试用户数据和压测配置文件的脚本。
 
-## 📁 文件说明
+## 文件说明
 
 ### 脚本文件
 
 1. **generate_10m_users.go** - 批量生成1000万用户数据到MySQL（使用项目config）
 2. **batch_create_sessions.go** - 直接创建Redis Session（超快版，并发500，绕过bcrypt）⚡⚡⚡ **推荐**
-3. **batch_login_fast.go** - 批量登录获取token（优化版，并发500，速度快7-8倍）⚡
-4. **insert_test_user.go** - 单个用户插入（用于调试）
+3. **insert_test_user.go** - 单个用户插入（用于调试）
 
 ### 生成的配置文件
 
-- **fixed_200_users.txt** - 200个固定用户账号（200并发压测用）
-- **fixed_2000_users.txt** - 2000个固定用户账号（2000并发压测用）
-- **random_users_info.txt** - 随机用户范围说明
-- **wrk_script_example.lua** - wrk压测脚本示例
+- **tokens_200.lua** - 200个固定用户
+- **tokens_200.txt** - 可读文件
 
 ### 压测脚本
 
@@ -29,11 +26,11 @@
 
 - **tokens_200.txt** / **tokens_200.lua** - 200个用户的token
 - **tokens_2000.txt** / **tokens_2000.lua** - 2000个用户的token
-- **tokens_10000.txt** / **tokens_10000.lua** - 10000个用户的token（随机用户场景）
+- **tokens_50000.txt** / **tokens_50000.lua** - 50000个用户的token（随机用户场景）
 
 ---
 
-## 🚀 使用步骤
+## 使用步骤
 
 ### 步骤1：生成1000万用户数据
 
@@ -50,8 +47,8 @@ go run generate_10m_users.go -config /path/to/config.yaml
 **性能参数：**
 - 批次大小：5000条/批
 - 并发Worker：10个
-- 预期速度：3000-5000条/秒
-- 总耗时：约30-60分钟
+- 预期速度：30000-50000条/秒
+- 总耗时：约5-10分钟
 
 **生成的用户数据：**
 - 用户名：`user00000001` 到 `user10000000`
@@ -76,27 +73,16 @@ database:
 
 ```bash
 # 生成压测用户列表和配置文件
-go run generate_test_accounts.go
+go run batch_create_sessions.go -count 200
 ```
 
 **生成的文件：**
-- `fixed_200_users.txt` - 200个固定用户
-- `fixed_2000_users.txt` - 2000个固定用户
-- `random_users_info.txt` - 随机用户说明
-- `wrk_script_example.lua` - wrk脚本示例
-
+- `tokens_200.lua` - 200个固定用户
+- `tokens_200.txt` - 可读文件
 ---
 
-### 步骤3：一键执行（可选）
 
-```bash
-# 运行一键脚本
-./generate_all.sh
-```
-
----
-
-## 🎯 压测准备与执行
+##  压测准备与执行
 
 ### 第一步：确保服务已启动
 
@@ -111,7 +97,7 @@ go run ./httpserver/cmd/httpserver/main.go -config ./httpserver/config/config.ya
 
 ### 第二步：批量获取Token
 
-#### 方式1：直接创建Session（超快版，强烈推荐）⚡⚡⚡
+#### 方式1：直接创建Session（超快版，强烈推荐）
 
 ```bash
 cd /Users/chuyao.zhuo/GolandProjects/entry-task/tcpserver/scripts
@@ -271,7 +257,7 @@ P99延迟: 145.67ms
 - 目标QPS：> 3000
 
 **预期行为：**
-- Redis缓存命中率：~95%
+- Redis缓存命中率：~99+%
 - 大部分请求直接从Redis返回
 - MySQL查询较少
 
@@ -290,13 +276,13 @@ wrk -t 10 -c 200 -d 60s --script wrk_fixed_users.lua http://localhost:8080/api/v
 
 **配置要求：**
 - 并发连接：200
-- 用户池：10000个用户（随机选择）
-- Token文件：`tokens_10000.lua`
+- 用户池：50000个用户（随机选择）
+- Token文件：`tokens_50000.lua`
 - 压测脚本：`wrk_random_users.lua`
 - 目标QPS：> 1000
 
 **预期行为：**
-- Redis缓存命中率：~30-50%
+- Redis缓存命中率：~30%
 - 频繁查询MySQL
 - 测试数据库连接池和查询优化
 
@@ -321,7 +307,7 @@ wrk -t 10 -c 200 -d 60s --script wrk_random_users.lua http://localhost:8080/api/
 - 目标QPS：> 1500
 
 **预期行为：**
-- Redis缓存命中率：~95%
+- Redis缓存命中率：~99+%
 - 测试高并发连接管理
 - 验证系统资源限制
 
@@ -351,7 +337,7 @@ wrk -t 20 -c 2000 -d 60s --script wrk_fixed_users.lua http://localhost:8080/api/
 - 目标QPS：> 800
 
 **预期行为：**
-- Redis缓存命中率：~30-50%
+- Redis缓存命中率：~30%
 - 大量MySQL查询
 - 测试系统在高负载下的稳定性
 

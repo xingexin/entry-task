@@ -19,10 +19,6 @@ const (
 	doubleDeleteDelayTime = time.Millisecond * 500
 )
 
-func init() {
-	rand.Seed(time.Now().UnixNano())
-}
-
 // UserRepository 用户仓储接口
 type UserRepository interface {
 	// GetByUsername 根据用户名查询用户（用于登录）

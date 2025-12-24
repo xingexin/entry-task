@@ -95,7 +95,7 @@ func (s *userService) Login(ctx context.Context, loginDTO *dto.LoginDTO) (*dto.L
 	}
 
 	// 3. 查询用户（从Repository获取，包含password_hash）
-	user, err := s.userRepo.GetByUsername(loginDTO.Username)
+	user, err := s.userRepo.GetByUsername(ctx, loginDTO.Username)
 	if err != nil {
 		log.Warn("用户不存在", zap.String("username", loginDTO.Username))
 		// 记录登录失败
@@ -180,7 +180,7 @@ func (s *userService) GetProfile(ctx context.Context, validateDTO *dto.ValidateT
 	}
 
 	// 3. 从Repository获取用户信息（优先缓存，返回 CachedUser）
-	cachedUser, err := s.userRepo.GetByID(userID)
+	cachedUser, err := s.userRepo.GetByID(ctx, userID)
 	if err != nil {
 		log.Error("获取用户信息失败", zap.Error(err), zap.Uint64("user_id", userID))
 		return nil, fmt.Errorf("获取用户信息失败: %w", err)
@@ -213,7 +213,7 @@ func (s *userService) UpdateNickname(ctx context.Context, updateDTO *dto.UpdateN
 	}
 
 	// 2. 调用Repository更新（自动处理缓存）
-	if err := s.userRepo.UpdateNickname(updateDTO.UserID, updateDTO.Nickname); err != nil {
+	if err := s.userRepo.UpdateNickname(ctx, updateDTO.UserID, updateDTO.Nickname); err != nil {
 		log.Error("更新昵称失败",
 			zap.Error(err),
 			zap.Uint64("user_id", updateDTO.UserID),
@@ -222,7 +222,7 @@ func (s *userService) UpdateNickname(ctx context.Context, updateDTO *dto.UpdateN
 	}
 
 	// 3. 重新查询用户信息（从缓存或数据库）
-	cachedUser, err := s.userRepo.GetByID(updateDTO.UserID)
+	cachedUser, err := s.userRepo.GetByID(ctx, updateDTO.UserID)
 	if err != nil {
 		log.Error("更新后查询用户信息失败", zap.Error(err), zap.Uint64("user_id", updateDTO.UserID))
 		return nil, fmt.Errorf("更新后查询用户信息失败: %w", err)
@@ -257,7 +257,7 @@ func (s *userService) UpdateProfilePicture(ctx context.Context, updateDTO *dto.U
 	}
 
 	// 2. 调用Repository更新（自动处理缓存）
-	if err := s.userRepo.UpdateProfilePicture(updateDTO.UserID, updateDTO.ProfilePicture); err != nil {
+	if err := s.userRepo.UpdateProfilePicture(ctx, updateDTO.UserID, updateDTO.ProfilePicture); err != nil {
 		log.Error("更新头像失败",
 			zap.Error(err),
 			zap.Uint64("user_id", updateDTO.UserID),
@@ -266,7 +266,7 @@ func (s *userService) UpdateProfilePicture(ctx context.Context, updateDTO *dto.U
 	}
 
 	// 3. 重新查询用户信息（从缓存或数据库）
-	cachedUser, err := s.userRepo.GetByID(updateDTO.UserID)
+	cachedUser, err := s.userRepo.GetByID(ctx, updateDTO.UserID)
 	if err != nil {
 		log.Error("更新后查询用户信息失败", zap.Error(err), zap.Uint64("user_id", updateDTO.UserID))
 		return nil, fmt.Errorf("更新后查询用户信息失败: %w", err)

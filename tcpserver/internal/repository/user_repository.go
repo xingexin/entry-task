@@ -26,22 +26,22 @@ func init() {
 // UserRepository 用户仓储接口
 type UserRepository interface {
 	// GetByUsername 根据用户名查询用户（用于登录）
-	GetByUsername(username string) (*model.User, error)
+	GetByUsername(ctx context.Context, username string) (*model.User, error)
 
 	// GetByID 根据ID查询用户
-	GetByID(id uint64) (*redis.CachedUser, error)
+	GetByID(ctx context.Context, id uint64) (*redis.CachedUser, error)
 
 	// Create 创建用户
-	Create(user *model.User) error
+	Create(ctx context.Context, user *model.User) error
 
 	// UpdateNickname 更新用户昵称
-	UpdateNickname(id uint64, nickname string) error
+	UpdateNickname(ctx context.Context, id uint64, nickname string) error
 
 	// UpdateProfilePicture 更新用户头像
-	UpdateProfilePicture(id uint64, profilePicture string) error
+	UpdateProfilePicture(ctx context.Context, id uint64, profilePicture string) error
 
 	// BatchCreate 批量创建用户（用于生成测试数据）
-	BatchCreate(users []*model.User) error
+	BatchCreate(ctx context.Context, users []*model.User) error
 }
 
 // userRepository 用户仓储实现
@@ -59,7 +59,7 @@ func NewUserRepository(db *sqlx.DB, redisManager redis.Manager) UserRepository {
 }
 
 // GetByUsername 根据用户名查询用户
-func (r *userRepository) GetByUsername(username string) (*model.User, error) {
+func (r *userRepository) GetByUsername(ctx context.Context, username string) (*model.User, error) {
 	var user model.User
 	query := `SELECT id, username, password_hash, nickname, profile_picture, created_at, updated_at 
               FROM users WHERE username = ?`
@@ -76,9 +76,7 @@ func (r *userRepository) GetByUsername(username string) (*model.User, error) {
 }
 
 // GetByID 根据ID查询用户（优先从缓存获取，自动处理负缓存）
-func (r *userRepository) GetByID(id uint64) (*redis.CachedUser, error) {
-	ctx := context.Background()
-
+func (r *userRepository) GetByID(ctx context.Context, id uint64) (*redis.CachedUser, error) {
 	// 1. 先查缓存
 	cachedUser, err := r.redisManager.GetUserCache().GetUser(ctx, id)
 	if err != nil {
@@ -153,7 +151,7 @@ func (r *userRepository) getByIDFromDB(id uint64) (*model.User, error) {
 }
 
 // Create 创建用户
-func (r *userRepository) Create(user *model.User) error {
+func (r *userRepository) Create(ctx context.Context, user *model.User) error {
 	query := `INSERT INTO users (id, username, password_hash, nickname, profile_picture) 
               VALUES (?, ?, ?, ?, ?)`
 
@@ -165,10 +163,8 @@ func (r *userRepository) Create(user *model.User) error {
 	return nil
 }
 
-// UpdateNickname 更新用户昵称（自动延迟双删缓存）
-func (r *userRepository) UpdateNickname(id uint64, nickname string) error {
-	ctx := context.Background()
-
+// UpdateNickname 更新用户昵称
+func (r *userRepository) UpdateNickname(ctx context.Context, id uint64, nickname string) error {
 	// 1. 删除缓存（降级策略：失败不影响主流程）
 	if err := r.redisManager.GetUserCache().DeleteUser(ctx, id); err != nil {
 		log.Error("删除用户缓存失败（第一次）",
@@ -214,10 +210,8 @@ func (r *userRepository) UpdateNickname(id uint64, nickname string) error {
 	return nil
 }
 
-// UpdateProfilePicture 更新用户头像（自动延迟双删缓存）
-func (r *userRepository) UpdateProfilePicture(id uint64, profilePicture string) error {
-	ctx := context.Background()
-
+// UpdateProfilePicture 更新用户头像
+func (r *userRepository) UpdateProfilePicture(ctx context.Context, id uint64, profilePicture string) error {
 	// 1. 删除缓存（降级策略：失败不影响主流程）
 	if err := r.redisManager.GetUserCache().DeleteUser(ctx, id); err != nil {
 		log.Error("删除用户缓存失败（第一次）",
@@ -264,7 +258,7 @@ func (r *userRepository) UpdateProfilePicture(id uint64, profilePicture string) 
 }
 
 // BatchCreate 批量创建用户
-func (r *userRepository) BatchCreate(users []*model.User) error {
+func (r *userRepository) BatchCreate(ctx context.Context, users []*model.User) error {
 	if len(users) == 0 {
 		return nil
 	}

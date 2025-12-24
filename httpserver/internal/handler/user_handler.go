@@ -68,7 +68,7 @@ func (h *UserHandler) Login(c *gin.Context) {
 	}
 
 	//设置超时时间
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
 	defer cancel()
 
 	//调用gRPC的API
@@ -116,7 +116,7 @@ func (h *UserHandler) GetProfile(c *gin.Context) {
 		return
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
 	defer cancel()
 
 	ctx = metadata.NewOutgoingContext(ctx,
@@ -159,7 +159,7 @@ func (h *UserHandler) UpdateNickname(c *gin.Context) {
 		return
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
 	defer cancel()
 
 	ctx = metadata.NewOutgoingContext(ctx,
@@ -214,7 +214,7 @@ func (h *UserHandler) UploadProfilePicture(c *gin.Context) {
 		return
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
 	defer cancel()
 
 	ctx = metadata.NewOutgoingContext(ctx,
@@ -247,7 +247,7 @@ func (h *UserHandler) UploadProfilePicture(c *gin.Context) {
 
 	avatarURL := fmt.Sprintf("/uploads/avatars/%s", filename)
 
-	ctx2, cancel2 := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx2, cancel2 := context.WithTimeout(c.Request.Context(), 3*time.Second)
 	defer cancel2()
 
 	ctx2 = metadata.NewOutgoingContext(ctx2,
@@ -291,7 +291,7 @@ func (h *UserHandler) GetProfilePicture(c *gin.Context) {
 		return
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
 	defer cancel()
 
 	ctx = metadata.NewOutgoingContext(ctx,
@@ -345,7 +345,7 @@ func (h *UserHandler) Logout(c *gin.Context) {
 		return
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)
 	defer cancel()
 
 	ctx = metadata.NewOutgoingContext(ctx,

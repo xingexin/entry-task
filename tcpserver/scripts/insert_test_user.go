@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"entry-task/tcpserver/config"
 	"entry-task/tcpserver/internal/model"
 	"entry-task/tcpserver/internal/repository"
@@ -87,7 +88,8 @@ func main() {
 	}
 
 	// 9. 调用 Repository 的 Create 方法
-	if err := userRepo.Create(user); err != nil {
+	ctx := context.Background()
+	if err := userRepo.Create(ctx, user); err != nil {
 		logger.Fatal("创建用户失败", zap.Error(err))
 
 	}

@@ -21,11 +21,19 @@ import (
 
 const (
 	// MaxFileSize 文件上传配置
-	MaxFileSize       = 5 * 1024 * 1024                        // 5MB
-	AllowedExtensions = ".jpg,.jpeg,.png,.webp"                // 允许的文件类型
-	UploadDir         = "./uploads/avatars"                    // 上传目录
-	DefaultAvatar     = "httpserver/static/default_avatar.png" // 默认头像
+	MaxFileSize = 5 * 1024 * 1024 // 5MB
+	//AllowedExtensions = ".jpg,.jpeg,.png,.webp"                // 允许的文件类型
+	UploadDir     = "./uploads/avatars"                    // 上传目录
+	DefaultAvatar = "httpserver/static/default_avatar.png" // 默认头像
 )
+
+// allowedExtensionsMap 允许的文件扩展名（用于精确匹配）
+var allowedExtensionsMap = map[string]bool{
+	".jpg":  true,
+	".jpeg": true,
+	".png":  true,
+	".webp": true,
+}
 
 // ============================================================================
 // Handler 结构体
@@ -97,7 +105,7 @@ func (h *UserHandler) Login(c *gin.Context) {
 		"/",             // Path: 全站有效
 		"",              // Domain: 当前域
 		false,           // Secure: 生产环境建议改为true
-		false,           // HttpOnly: 改为false，让前端JS可以读取
+		true,            // HttpOnly: 改为false，让前端JS可以读取
 	)
 
 	// 发送响应
@@ -209,7 +217,7 @@ func (h *UserHandler) UploadProfilePicture(c *gin.Context) {
 	}
 
 	ext := strings.ToLower(filepath.Ext(file.Filename))
-	if !strings.Contains(AllowedExtensions, ext) {
+	if !allowedExtensionsMap[ext] {
 		response.Error(c, response.CodeUnsupportedFileType, "不支持的文件类型")
 		return
 	}

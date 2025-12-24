@@ -2,10 +2,12 @@ package redis
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strconv"
 	"time"
 
+	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 
 	log "entry-task/tcpserver/pkg/logger"
@@ -77,8 +79,8 @@ func (ll *loginLimiter) GetLoginFailCount(ctx context.Context, username string) 
 	key := LoginFailKeyPrefix + username
 	countStr, err := ll.client.Get(ctx, key)
 	if err != nil {
-		// 使用字符串比较判断redis.Nil（因为没有直接导入redis包）
-		if err.Error() == "redis: nil" {
+		//若没有查到缓存则返回0
+		if errors.Is(err, redis.Nil) {
 			return 0, nil
 		}
 		return 0, err

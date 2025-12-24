@@ -6,11 +6,9 @@ import (
 	"entry-task/tcpserver/internal/dto"
 	"entry-task/tcpserver/internal/service"
 
-	"go.uber.org/zap"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
 	log "entry-task/tcpserver/pkg/logger"
+
+	"go.uber.org/zap"
 )
 
 // ============================================================================
@@ -90,7 +88,7 @@ func (h *UserServiceHandler) Logout(ctx context.Context, req *pb.LogoutRequest) 
 	if err != nil {
 		code, message := mapServiceError(err)
 		log.Warn("登出失败",
-			zap.String("token", req.Token),
+			zap.String("token", maskToken(req.Token)),
 			zap.Int32("code", code),
 			zap.Error(err))
 
@@ -101,7 +99,7 @@ func (h *UserServiceHandler) Logout(ctx context.Context, req *pb.LogoutRequest) 
 	}
 
 	// 4. 成功响应
-	log.Info("登出成功", zap.String("token", req.Token))
+	log.Info("登出成功", zap.String("token", maskToken(req.Token)))
 	return dto.ToProtoLogoutResponse(CodeSuccess, "登出成功"), nil
 }
 
@@ -120,7 +118,7 @@ func (h *UserServiceHandler) GetProfile(ctx context.Context, req *pb.GetProfileR
 	if err != nil {
 		code, message := mapServiceError(err)
 		log.Warn("获取用户信息失败",
-			zap.String("token", req.Token),
+			zap.String("token", maskToken(req.Token)),
 			zap.Int32("code", code),
 			zap.Error(err))
 
@@ -147,7 +145,7 @@ func (h *UserServiceHandler) UpdateNickname(ctx context.Context, req *pb.UpdateN
 	if err != nil {
 		code, message := mapServiceError(err)
 		log.Warn("Token验证失败",
-			zap.String("token", req.Token),
+			zap.String("token", maskToken(req.Token)),
 			zap.Int32("code", code),
 			zap.Error(err))
 
@@ -198,7 +196,7 @@ func (h *UserServiceHandler) UpdateProfilePicture(ctx context.Context, req *pb.U
 	if err != nil {
 		code, message := mapServiceError(err)
 		log.Warn("Token验证失败",
-			zap.String("token", req.Token),
+			zap.String("token", maskToken(req.Token)),
 			zap.Int32("code", code),
 			zap.Error(err))
 
@@ -274,19 +272,13 @@ func mapServiceError(err error) (int32, string) {
 }
 
 // ============================================================================
-// gRPC 错误转换（可选，用于严重错误场景）
+// 辅助函数
 // ============================================================================
 
-// toGRPCError 将业务错误转换为 gRPC 错误（严重错误时使用）
-func toGRPCError(err error) error {
-	switch err {
-	case service.ErrInvalidToken:
-		return status.Error(codes.Unauthenticated, err.Error())
-	case service.ErrUserNotFound:
-		return status.Error(codes.NotFound, err.Error())
-	case service.ErrLoginLimitExceeded:
-		return status.Error(codes.ResourceExhausted, err.Error())
-	default:
-		return status.Error(codes.Internal, err.Error())
+// maskToken 脱敏 Token，隐藏后 10 个字符
+func maskToken(token string) string {
+	if len(token) <= 10 {
+		return "***" // 如果 token 太短，全部隐藏
 	}
+	return token[:len(token)-10] + "**********"
 }
